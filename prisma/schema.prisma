@@ -7,32 +7,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  MEMBER
+  ADMIN
+}
+
+enum BookStatus {
+  AVAILABLE
+  BORROWED
+}
+
+enum RecordStatus {
+  BORROWED
+  RETURNED
+}
+
 model User {
   id         Int      @id @default(autoincrement())
   name       String
   email      String   @unique
   password   String
-  role       String   @default("MEMBER")
+  role       Role     @default(MEMBER)
   created_at DateTime @default(now())
   records    Record[]
 }
 
 model Book {
-  id             Int      @id @default(autoincrement())
+  id             Int        @id @default(autoincrement())
   title          String
   author         String
   published_year Int
-  status         String   @default("available")
+  status         BookStatus @default(AVAILABLE)
+  updated_at     DateTime   @updatedAt
   records        Record[]
 }
 
 model Record {
-  id          Int       @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   user_id     Int
   book_id     Int
-  borrow_date DateTime  @default(now())
+  borrow_date DateTime     @default(now())
   return_date DateTime?
-  status      String    @default("borrowed")
-  user        User      @relation(fields: [user_id], references: [id])
-  book        Book      @relation(fields: [book_id], references: [id])
+  status      RecordStatus @default(BORROWED)
+  updated_at  DateTime     @updatedAt
+  user        User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  book        Book         @relation(fields: [book_id], references: [id], onDelete: Cascade)
 }
