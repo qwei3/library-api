@@ -3,8 +3,10 @@ import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import yaml from 'js-yaml';
 import fs from 'fs';
-import postRoutes from './routes/postRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import bookRoutes from './routes/bookRoutes.js';
+import recordRoutes from './routes/recordRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,16 +15,18 @@ app.use(express.json());
 if (process.env.NODE_ENV !== 'test') app.use(morgan('tiny'));
 
 let specs;
-try{
+try {
   specs = yaml.load(fs.readFileSync('./docs/openapi.yaml', 'utf8'));
-} catch(error){
+} catch (error) {
   console.log('Failed to load OpenAPI specification', error);
   process.exit(1);
 }
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-app.use('/api/posts', postRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/books', bookRoutes);
+app.use('/api/records', recordRoutes);
 
 app.use((req, res, next) => {
   const err = new Error('Not Found');
