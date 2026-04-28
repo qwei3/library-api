@@ -3,12 +3,14 @@ import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import yaml from 'js-yaml';
 import fs from 'fs';
+import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import bookRoutes from './routes/bookRoutes.js';
 import recordRoutes from './routes/recordRoutes.js';
 
 const app = express();
+app.use(cors());
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
